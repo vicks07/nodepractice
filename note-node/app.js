@@ -14,7 +14,13 @@ const argv = yargs.argv;
 
 if (command === 'add'){
     //console.log("Arguements ",argv.title,argv.body);
-    notes.addNote(argv.title,argv.body);
+    var note = notes.addNote(argv.title,argv.body);
+    if (note === undefined){
+        console.log(`${argv.title} already exists!`);
+    }
+    else{
+        console.log(`${argv.title} added successfuly.`);
+    }
     //console.log('Adding New Note');
 }
 
