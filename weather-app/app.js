@@ -1,10 +1,36 @@
-const request = require('request');
+//const request = require('request');
+const geocode = require('./geocode/geocode.js')
+const weather = require('./weather/weather.js')
+const yargs = require('yargs');
+const argv = yargs
+		.options({
+			address:{
+				describe:'Address to get weather information',
+				demand:true,
+				alias:'a',
+				string:true
+			}
+		})		
+		.help()
+		.alias('help','h')
+		.argv;
 
-request({
-    url:'https://maps.googleapis.com/maps/api/geocode/json?key=AIzaSyDm_uDnlHgdjHFz3fF3X8t06D1JOEw5568&address=mit%20manipal',
-    json:true
-},(error,response,body)=>{
-    //console.log(JSON.stringify(body,undefined,2));
-    console.log(`Latitude: ${body.results[0].geometry.location.lat}`);
-    console.log(`Latitude: ${body.results[0].geometry.location.lng}`);
+geocode.geocodeAddress(argv.address,(errorMessage,results)=>{
+	if(errorMessage){
+		console.log(errorMessage);
+	}
+	else{
+		weather.getWeather(results.latitude,results.longitude,(errorMessage,results)=>{
+			if(errorMessage){
+				console.log(errorMessage);
+			}
+			else{
+				console.log(results.temperature);
+			}
+		});
+		//console.log(JSON.stringify(results,undefined,2));
+	}
 });
+//console.log(encodedAddress);
+
+//https://api.darksky.net/forecast/d90e57891ea9a036a6b5b5638de3cc69/37.8267,-122.4233
